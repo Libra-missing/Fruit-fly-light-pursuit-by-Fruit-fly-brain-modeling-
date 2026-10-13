@@ -83,6 +83,36 @@ flowchart LR
 | `model/` | Cached sparse weight matrix (`fly_brain_connections_weights.pth`) |
 
 ---
+## Environment
+
+This project was developed and tested on the following setup. Other
+configurations may work, but the versions below are known to be compatible.
+
+| Component | Version | Notes |
+|---|---|---|
+| OS | Ubuntu 26.04 LTS (aarch64) | Running inside a VM on Apple Silicon |
+| ROS 2 | Jazzy | Installed via conda, not apt |
+| Python | 3.12.15 | conda env `ros2_env` |
+| PyTorch | 2.14.1 (CPU) | CUDA / MPS not required |
+| snnTorch | latest | Spike encoding + LIF dynamics |
+| NumPy | 2.5.4 | |
+| Pandas | 3.0.6 | Reads FlyWire CSV / parquet |
+| PyArrow | 26.0.0 | Required for `.parquet` |
+| pygame | latest (pip) | 2D rendering, not available via conda in ROS env |
+| Pillow | latest (pip) | Sprite generation |
+
+### Environment rules
+
+- **ROS packages** come from `conda install`.
+- **Pure Python packages** (`pygame`, `pillow`) must be installed via `pip`.
+  Conda's solver conflicts with the ROS Qt / sdl2 stack.
+- **Never use `sudo pip`** inside the conda env — it bypasses isolation.
+
+### Minimum requirements
+
+- Any CPU with at least 8 GB RAM (16 GB recommended)
+- GPU is **not** required; everything runs on CPU
+- `torch.sparse_csr_tensor` must be available (PyTorch ≥ 1.12)
 
 ## Installation
 
