@@ -15,7 +15,7 @@
 </p>
 
 ---
-![Demo](docs/demo)
+![Demo](demo.gif)
 
 ## Overview
 
