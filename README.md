@@ -328,6 +328,7 @@ This project assumes a working ROS 2 installation. On Ubuntu:
 
 ```bash
 source /opt/ros/jazzy/setup.bash
+```
 2. Python environment
 
 Use the same Python environment where ROS 2 Python bindings are available:
