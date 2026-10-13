@@ -15,7 +15,7 @@
 </p>
 
 ---
-![Uploading cafde5173275006370ece922298e11bc.gif…]()
+![Demo](docs/demo)
 
 ## Overview
 
