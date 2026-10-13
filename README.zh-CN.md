@@ -79,6 +79,36 @@ flowchart LR
 
 ---
 
+## 环境
+
+本项目在以下环境中开发和验证。其他配置可能也能跑，但下面的版本
+组合是经过确认的。
+
+| 组件 | 版本 | 说明 |
+|---|---|---|
+| 操作系统 | Ubuntu 26.04 LTS (aarch64) | 运行在 Apple Silicon 上的虚拟机中 |
+| ROS 2 | Jazzy | 通过 conda 安装，不是 apt |
+| Python | 3.12.15 | conda 环境 `ros2_env` |
+| PyTorch | 2.14.1 (CPU) | 不需要 CUDA / MPS |
+| snnTorch | 最新版 | 脉冲编码 + LIF 动力学 |
+| NumPy | 2.5.4 | |
+| Pandas | 3.0.6 | 读取 FlyWire CSV / parquet |
+| PyArrow | 26.0.0 | 解析 `.parquet` 必需 |
+| pygame | 最新版 (pip) | 2D 渲染，conda 在 ROS 环境下装不了 |
+| Pillow | 最新版 (pip) | 生成素材图片 |
+
+### 环境规则
+
+- **ROS 包**通过 `conda install` 安装。
+- **纯 Python 包**（`pygame`、`pillow`）必须用 `pip` 装，
+  conda 求解器会和 ROS 的 Qt / sdl2 栈冲突。
+- **不要在 conda 环境里用 `sudo pip`** —— 它会绕过环境隔离。
+
+### 最低要求
+
+- 任意 CPU，至少 8 GB 内存（推荐 16 GB）
+- **不需要 GPU**，全部在 CPU 上运行
+- 需要 `torch.sparse_csr_tensor` 支持（PyTorch ≥ 1.12）
 ## 安装
 
 ### 1. ROS 2（Jazzy 或更新）
