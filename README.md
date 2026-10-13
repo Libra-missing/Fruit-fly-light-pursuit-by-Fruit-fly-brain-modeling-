@@ -209,7 +209,7 @@ Replace any PNG in `assets/` — no code change needed.
 ## Credits
 
 This project is a downstream ROS 2 integration. The core brain model is
-**not** ours — it is the snnTorch port by **Michał Antropik**:
+**not** my work — it is the snnTorch port by **Michał Antropik**:
 
 - **Upstream repository**: https://github.com/Neuromorphicism/fly-brain-snntorch
 - **Original Brian2 model**: https://github.com/philshiu/Drosophila_brain_model
