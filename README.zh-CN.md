@@ -201,7 +201,7 @@ SLOW_SPEED     = 0.3
 
 ## 致谢
 
-本项目只是 ROS 2 下游集成。核心大脑模型**不是我们做的** —— 它是
+本项目只是 ROS 2 下游集成。核心大脑模型**不是我做的** —— 它是
 **Michał Antropik** 的 snnTorch 移植：
 
 - **上游仓库**：https://github.com/Neuromorphicism/fly-brain-snntorch
