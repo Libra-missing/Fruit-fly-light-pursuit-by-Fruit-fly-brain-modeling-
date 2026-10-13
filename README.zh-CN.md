@@ -1,8 +1,3 @@
----
-
-## 📄 `README.zh-CN.md`（中文版）
-
-```markdown
 # ROS 2 果蝇趋光仿真
 
 <p align="center">
@@ -20,7 +15,7 @@
 </p>
 
 ---
-
+![Demo](demo.gif)
 ## 概述
 
 本项目把一个 **12.7 万神经元的成年果蝇脉冲大脑模型**，和一个用 ROS 2
@@ -45,17 +40,15 @@
 ---
 
 ## 架构
-┌──────────────────┐ /light/pose ┌───────────────────┐
-│ fly_env.py │ ────────────────► │ fly_brain_ros.py │
-│ (pygame + ROS) │ │ (ROS + snnTorch) │
-│ │ ◄──────────────── │ │
-│ - 草地渲染 │ /fly/cmd_vel │ - 光 → 糖 GRN │
-│ - 果蝇渲染 │ │ 泊松编码 │
-│ - 光源绕圈 │ /fly/pose │ - 12.7 万 LIF 步 │
-│ │ ────────────────► │ - MN9 → 转向 │
-└──────────────────┘ └───────────────────┘
 
-text
+```mermaid
+flowchart LR
+    ENV["fly_env.py<br/>（pygame + ROS）<br/>草地、果蝇、绕圈光源"]
+    BRAIN["fly_brain_ros.py<br/>（ROS + snnTorch）<br/>大脑线程 + 控制器"]
+
+    ENV -- "/light/pose, /fly/pose" --> BRAIN
+    BRAIN -- "/fly/cmd_vel" --> ENV
+```
 
 **信号流**
 
@@ -94,132 +87,141 @@ text
 
 ```bash
 source /opt/ros/jazzy/setup.bash
-2. Python 环境
+```
+
+### 2. Python 环境
 
 用能访问 ROS 2 Python 绑定的环境：
 
-bash
+```bash
 conda activate ros2_env
-
-# ROS 包走 conda
-# 纯 Python 包（pygame、pillow）走 pip
 pip install pygame pillow
-⚠️ 不要在 ROS 环境里用 conda install pygame —— conda 求解器会
-和 qt-main / sdl2_mixer 依赖链冲突。
-3. 大脑数据
+```
 
-下载 FlyWire v630 文件放到 data/：
+> ⚠️ **不要**在 ROS 环境里用 `conda install pygame` —— conda 求解器会
+> 和 `qt-main` / `sdl2_mixer` 依赖链冲突。
 
-2023_03_23_completeness_630_final.csv
-2023_03_23_connectivity_630_final.parquet
+### 3. 大脑数据
+
+下载 FlyWire v630 文件放到 `data/`：
+
+- `2023_03_23_completeness_630_final.csv`
+- `2023_03_23_connectivity_630_final.parquet`
+
 来源：https://github.com/philshiu/Drosophila_brain_model
 
-4. 生成素材
+### 4. 生成素材
 
-bash
+```bash
 python make_assets.py
-使用方法
+```
 
-开两个终端。
+---
 
-终端 A —— 环境
+## 使用方法
 
-bash
+开**两个终端**。
+
+**终端 A —— 环境**
+
+```bash
 conda activate ros2_env
 cd fly-brain-snntorch
 python fly_env.py
+```
+
 弹出窗口：草地背景、一只果蝇、一个绕圈的光源。
 
-终端 B —— 大脑 + 控制器
+**终端 B —— 大脑 + 控制器**
 
-bash
+```bash
 conda activate ros2_env
 cd fly-brain-snntorch
 python fly_brain_ros.py
+```
+
 果蝇开始追光源。
 
-话题
+### 话题
 
-话题	类型	方向
-/fly/cmd_vel	geometry_msgs/Twist	控制器 → 环境
-/fly/pose	geometry_msgs/Pose2D	环境 → 控制器
-/light/pose	geometry_msgs/Pose2D	环境 → 控制器
-参数配置
+| 话题 | 类型 | 方向 |
+|---|---|---|
+| `/fly/cmd_vel` | `geometry_msgs/Twist` | 控制器 → 环境 |
+| `/fly/pose` | `geometry_msgs/Pose2D` | 环境 → 控制器 |
+| `/light/pose` | `geometry_msgs/Pose2D` | 环境 → 控制器 |
+
+---
+
+## 参数配置
 
 每个文件顶部的参数都可以调。
 
-fly_env.py
+**`fly_env.py`**
 
-python
+```python
 WIN_W, WIN_H   = 800, 600      # 窗口尺寸
 FLY_SPEED_PX   = 80.0          # linear.x=1.0 时的像素速度
 LIGHT_R        = 200.0         # 光源绕圈半径（像素）
 LIGHT_OMEGA    = 0.6           # 绕圈角速度（rad/s）
-fly_brain_ros.py
+```
 
-python
+**`fly_brain_ros.py`**
+
+```python
 BRAIN_HZ       = 2             # 大脑仿真频率
 CTRL_HZ        = 10            # 控制循环频率
 TURN_GAIN      = 3.5
 BASE_SPEED     = 1.2
 SLOW_SPEED     = 0.3
-换图片
+```
 
-直接替换 assets/ 里的 PNG，代码不用改。
+### 换图片
 
-文件	建议尺寸	说明
-grass.png	800×600 或更大	背景
-fly.png	64×64 或 128×128	透明背景，头朝上
-light.png	96×96	透明背景
-常见问题
+直接替换 `assets/` 里的 PNG，代码不用改。
 
-现象	解决
-ModuleNotFoundError: pygame	pip install pygame（不要用 conda）
-conda 装 pygame 求解失败	改用 pip；conda ROS 栈和 sdl2_mixer 冲突
-打印 MN9 ID not found	大脑输出被忽略，靠 err 项仍能趋光
-大脑一步太慢	BRAIN_HZ 降到 1 或 0.5
-果蝇图标方向反了	调整 fly_env.py 里 rot_deg 的偏移量
-致谢
+| 文件 | 建议尺寸 | 说明 |
+|---|---|---|
+| `grass.png` | 800×600 或更大 | 背景 |
+| `fly.png` | 64×64 或 128×128 | 透明背景，**头朝上** |
+| `light.png` | 96×96 | 透明背景 |
 
-本项目只是 ROS 2 下游集成。核心大脑模型不是我们做的 —— 它是
-Michał Antropik 的 snnTorch 移植：
+---
 
-上游仓库：https://github.com/Neuromorphicism/fly-brain-snntorch
-原始 Brian2 模型：https://github.com/philshiu/Drosophila_brain_model
-论文：Shiu, Sterne, Spiller et al., Nature 634, 210–219 (2024)
-https://doi.org/10.1038/s41586-024-07763-9
+## 常见问题
+
+| 现象 | 解决 |
+|---|---|
+| `ModuleNotFoundError: pygame` | `pip install pygame`（不要用 conda） |
+| conda 装 pygame 求解失败 | 改用 pip；conda ROS 栈和 sdl2_mixer 冲突 |
+| 打印 `MN9 ID not found` | 大脑输出被忽略，靠 `err` 项仍能趋光 |
+| 大脑一步太慢 | `BRAIN_HZ` 降到 1 或 0.5 |
+| 果蝇图标方向反了 | 调整 `fly_env.py` 里 `rot_deg` 的偏移量 |
+
+---
+
+## 致谢
+
+本项目只是 ROS 2 下游集成。核心大脑模型**不是我们做的** —— 它是
+**Michał Antropik** 的 snnTorch 移植：
+
+- **上游仓库**：https://github.com/Neuromorphicism/fly-brain-snntorch
+- **原始 Brian2 模型**：https://github.com/philshiu/Drosophila_brain_model
+- **论文**：Shiu, Sterne, Spiller et al., *Nature* 634, 210–219 (2024)
+  https://doi.org/10.1038/s41586-024-07763-9
+
 上游移植还引用了以下工作：
 
-F. Wang, B. H. Theilman, F. Rothganger et al. "Neuromorphic Simulation of
-Drosophila Melanogaster Brain Connectome on Loihi 2", arXiv, 2025.
-P. Schlegel, Y. Yin, A. S. Bates et al. "Whole-brain annotation and
-multi-connectome cell typing of Drosophila", Nature, vol. 634, 2024.
-A. Matsliah, S. Yu, K. Kruk et al. "Neuronal parts list and wiring diagram
-for a visual system", Nature, vol. 634, 2024.
-许可证
+1. F. Wang, B. H. Theilman, F. Rothganger et al. *"Neuromorphic Simulation of
+   Drosophila Melanogaster Brain Connectome on Loihi 2"*, arXiv, 2025.
+2. P. Schlegel, Y. Yin, A. S. Bates et al. *"Whole-brain annotation and
+   multi-connectome cell typing of Drosophila"*, Nature, vol. 634, 2024.
+3. A. Matsliah, S. Yu, K. Kruk et al. *"Neuronal parts list and wiring diagram
+   for a visual system"*, Nature, vol. 634, 2024.
+
+---
+
+## 许可证
 
 上游大脑模型及其数据采用 MIT 许可证。本 ROS 2 集成采用相同条款发布。
 
 软件按"原样"提供，不保证性能、安全或特定用途适用性。
-
-text
-
----
-
-## 📌 关于"中英文互链"的说明
-
-GitHub 上的标准做法就是两个文件：
-
-| 文件 | 语言 | 谁先看到 |
-|---|---|---|
-| `README.md` | 英文 | 默认（GitHub 仓库首页显示这个） |
-| `README.zh-CN.md` | 中文 | 点顶部链接才进 |
-
-两边的顶部都有对方链接：
-
-```markdown
-<!-- 英文 README.md -->
-[中文文档](README.zh-CN.md)
-
-<!-- 中文 README.zh-CN.md -->
-[English](README.md)
