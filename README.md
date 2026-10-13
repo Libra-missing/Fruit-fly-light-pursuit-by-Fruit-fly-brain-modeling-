@@ -329,109 +329,141 @@ This project assumes a working ROS 2 installation. On Ubuntu:
 ```bash
 source /opt/ros/jazzy/setup.bash
 ```
-2. Python environment
+
+### 2. Python environment
 
 Use the same Python environment where ROS 2 Python bindings are available:
 
-bash
+```bash
 conda activate ros2_env
-
-# ROS packages come from conda
-# Pure Python packages (pygame, pillow) go through pip
 pip install pygame pillow
-⚠️ Do not try to install pygame via conda install in a ROS environment —
-the dependency solver will conflict with qt-main / sdl2_mixer chains.
-3. Brain data
+```
 
-Download the FlyWire v630 files and place them in data/:
+> ⚠️ Do **not** try to install `pygame` via `conda install` in a ROS
+> environment — the dependency solver will conflict with `qt-main` /
+> `sdl2_mixer` chains.
 
-2023_03_23_completeness_630_final.csv
-2023_03_23_connectivity_630_final.parquet
+### 3. Brain data
+
+Download the FlyWire v630 files and place them in `data/`:
+
+- `2023_03_23_completeness_630_final.csv`
+- `2023_03_23_connectivity_630_final.parquet`
+
 Source: https://github.com/philshiu/Drosophila_brain_model
 
-4. Generate sprites
+### 4. Generate sprites
 
-bash
+```bash
 python make_assets.py
-Usage
+```
 
-Open two terminals.
+---
 
-Terminal A — environment
+## Usage
 
-bash
+Open **two terminals**.
+
+**Terminal A — environment**
+
+```bash
 conda activate ros2_env
 cd fly-brain-snntorch
 python fly_env.py
-A window appears: grass background, a fly sprite, and a light orbiting the arena.
+```
 
-Terminal B — brain + controller
+A window appears: grass background, a fly sprite, and a light orbiting the
+arena.
 
-bash
+**Terminal B — brain + controller**
+
+```bash
 conda activate ros2_env
 cd fly-brain-snntorch
 python fly_brain_ros.py
+```
+
 The fly chases the orbiting light.
 
-Topics
+### Topics
 
-Topic	Type	Direction
-/fly/cmd_vel	geometry_msgs/Twist	Controller → Environment
-/fly/pose	geometry_msgs/Pose2D	Environment → Controller
-/light/pose	geometry_msgs/Pose2D	Environment → Controller
-Configuration
+| Topic | Type | Direction |
+|---|---|---|
+| `/fly/cmd_vel` | `geometry_msgs/Twist` | Controller → Environment |
+| `/fly/pose` | `geometry_msgs/Pose2D` | Environment → Controller |
+| `/light/pose` | `geometry_msgs/Pose2D` | Environment → Controller |
+
+---
+
+## Configuration
 
 All tunable parameters are at the top of each file.
 
-fly_env.py
+**`fly_env.py`**
 
-python
+```python
 WIN_W, WIN_H   = 800, 600      # window size
 FLY_SPEED_PX   = 80.0          # pixels/s at linear.x = 1.0
 LIGHT_R        = 200.0         # orbit radius (px)
 LIGHT_OMEGA    = 0.6           # orbit speed (rad/s)
-fly_brain_ros.py
+```
 
-python
+**`fly_brain_ros.py`**
+
+```python
 BRAIN_HZ       = 2             # brain simulation frequency
 CTRL_HZ        = 10            # control loop frequency
 TURN_GAIN      = 3.5
 BASE_SPEED     = 1.2
 SLOW_SPEED     = 0.3
-Swapping sprites
+```
 
-Replace any PNG in assets/ — no code change needed.
+### Swapping sprites
 
-File	Recommended size	Notes
-grass.png	800×600 or larger	background
-fly.png	64×64 or 128×128	transparent, head pointing up
-light.png	96×96	transparent
-Troubleshooting
+Replace any PNG in `assets/` — no code change needed.
 
-Symptom	Fix
-ModuleNotFoundError: pygame	pip install pygame (not conda install)
-Conda solver conflict on pygame	Install via pip; conda ROS stack conflicts with sdl2_mixer
-MN9 ID not found warning	Brain output is ignored, fly still converges via err term
-Brain step too slow	Lower BRAIN_HZ to 1 or 0.5
-Fly sprite rotated wrong	Adjust rot_deg offset in fly_env.py
-Credits
+| File | Recommended size | Notes |
+|---|---|---|
+| `grass.png` | 800×600 or larger | background |
+| `fly.png` | 64×64 or 128×128 | transparent, head pointing **up** |
+| `light.png` | 96×96 | transparent |
+
+---
+
+## Troubleshooting
+
+| Symptom | Fix |
+|---|---|
+| `ModuleNotFoundError: pygame` | `pip install pygame` (not `conda install`) |
+| Conda solver conflict on pygame | Install via pip; conda ROS stack conflicts with sdl2_mixer |
+| `MN9 ID not found` warning | Brain output is ignored, fly still converges via `err` term |
+| Brain step too slow | Lower `BRAIN_HZ` to 1 or 0.5 |
+| Fly sprite rotated wrong | Adjust `rot_deg` offset in `fly_env.py` |
+
+---
+
+## Credits
 
 This project is a downstream ROS 2 integration. The core brain model is
-not ours — it is the snnTorch port by Michał Antropik:
+**not** ours — it is the snnTorch port by **Michał Antropik**:
 
-Upstream repository: https://github.com/Neuromorphicism/fly-brain-snntorch
-Original Brian2 model: https://github.com/philshiu/Drosophila_brain_model
-Paper: Shiu, Sterne, Spiller et al., Nature 634, 210–219 (2024)
-https://doi.org/10.1038/s41586-024-07763-9
+- **Upstream repository**: https://github.com/Neuromorphicism/fly-brain-snntorch
+- **Original Brian2 model**: https://github.com/philshiu/Drosophila_brain_model
+- **Paper**: Shiu, Sterne, Spiller et al., *Nature* 634, 210–219 (2024)
+  https://doi.org/10.1038/s41586-024-07763-9
+
 Additional references used in the upstream port:
 
-F. Wang, B. H. Theilman, F. Rothganger et al. "Neuromorphic Simulation of
-Drosophila Melanogaster Brain Connectome on Loihi 2", arXiv, 2025.
-P. Schlegel, Y. Yin, A. S. Bates et al. "Whole-brain annotation and
-multi-connectome cell typing of Drosophila", Nature, vol. 634, 2024.
-A. Matsliah, S. Yu, K. Kruk et al. "Neuronal parts list and wiring diagram
-for a visual system", Nature, vol. 634, 2024.
-License
+1. F. Wang, B. H. Theilman, F. Rothganger et al. *"Neuromorphic Simulation of
+   Drosophila Melanogaster Brain Connectome on Loihi 2"*, arXiv, 2025.
+2. P. Schlegel, Y. Yin, A. S. Bates et al. *"Whole-brain annotation and
+   multi-connectome cell typing of Drosophila"*, Nature, vol. 634, 2024.
+3. A. Matsliah, S. Yu, K. Kruk et al. *"Neuronal parts list and wiring diagram
+   for a visual system"*, Nature, vol. 634, 2024.
+
+---
+
+## License
 
 The upstream brain model and its data are distributed under the MIT license.
 This ROS 2 integration is released under the same terms.
