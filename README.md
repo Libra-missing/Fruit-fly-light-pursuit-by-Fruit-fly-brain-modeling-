@@ -25,7 +25,7 @@ environment.
 
 A virtual light source orbits the arena. The fly only "sees" the light through
 a **sugar gustatory pathway** borrowed from Shiu et al. 2024 — the model was
-originally validated on taste, not vision, so we map light intensity onto the
+originally validated on taste, not vision, so I map light intensity onto the
 sugar GRN firing rate. The brain's output is decoded back into a steering
 command that drives the fly toward the light.
 
@@ -65,7 +65,7 @@ flowchart LR
 | 5. Actuation | Publish `Twist` on `/fly/cmd_vel` |
 
 > **Note on vision**: The FlyWire central brain does not contain a complete
-> visual system. We reuse the sugar pathway because it is the best-validated
+> visual system. I reuse the sugar pathway because it is the best-validated
 > sensorimotor circuit in the model. Light intensity is therefore encoded as
 > "sweetness".
 
