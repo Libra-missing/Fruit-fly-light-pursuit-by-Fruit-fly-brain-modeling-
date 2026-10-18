@@ -108,6 +108,30 @@ flowchart LR
 
 ## Environment & Installation
 
+This project was developed and tested on the following setup. Other configurations may work, but the versions below are known to be compatible.
+
+| Component | Version | Notes |
+|---|---|---|
+| **OS** | Ubuntu 26.04 LTS (aarch64) | Running inside a VM on Apple Silicon |
+| **ROS 2** | Jazzy | Installed via `conda`, not `apt` |
+| **Python** | 3.12.15 | conda env: `ros2_env` |
+| **PyTorch** | 2.14.1 (CPU) | CUDA / MPS are not required |
+| **snnTorch** | latest | Spike encoding + LIF dynamics |
+| **Stable-Baselines3** | latest | PPO training (only in `fly_rl` env) |
+| **pygame** | latest (`pip`) | 2D rendering (avoid `conda install` in ROS env) |
+| **NumPy / Pandas / PyArrow** | 2.5.4 / 3.0.6 / 26.0.0 | Data processing |
+
+### Hardware Requirements
+- **CPU**: Any modern CPU (tested on Apple M2 Max via VM)
+- **RAM**: Minimum 8 GB (16 GB recommended)
+- **GPU**: **Not required**. Both SNN and RL models run entirely on the CPU.
+
+### Environment Rules
+- **ROS packages** are installed via `conda install`.
+- **Pure Python packages** (`pygame`, `pillow`, etc.) must be installed via `pip` inside the conda env. Do **not** use `sudo pip`.
+- **RL Training** requires a separate environment (`fly_rl`) to avoid dependency conflicts with the ROS Qt / sdl2 stack.
+
+---
 ### 1. ROS 2 (Jazzy or newer)
 ```bash
 source /opt/ros/jazzy/setup.bash
