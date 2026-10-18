@@ -88,6 +88,32 @@ flowchart LR
 
 ---
 
+## 环境
+
+本项目在以下环境中开发和验证。其他配置可能也能跑，但下面的版本组合是经过确认的。
+
+| 组件 | 版本 | 说明 |
+|---|---|---|
+| **操作系统** | Ubuntu 26.04 LTS (aarch64) | 运行在 Apple Silicon 上的虚拟机中 |
+| **ROS 2** | Jazzy | 通过 `conda` 安装，不是 `apt` |
+| **Python** | 3.12.15 | conda 环境：`ros2_env` |
+| **PyTorch** | 2.14.1 (CPU) | 不需要 CUDA / MPS |
+| **snnTorch** | 最新版 | 脉冲编码 + LIF 动力学 |
+| **Stable-Baselines3** | 最新版 | PPO 训练 (仅在 `fly_rl` 环境中) |
+| **pygame** | 最新版 (`pip`) | 2D 渲染 (ROS 环境下请勿使用 `conda install`) |
+| **NumPy / Pandas / PyArrow** | 2.5.4 / 3.0.6 / 26.0.0 | 数据处理 |
+
+### 硬件要求
+- **CPU**：任意现代 CPU（本项目在虚拟机中的 Apple M2 Max 上测试通过）
+- **内存**：最低 8 GB（推荐 16 GB）
+- **GPU**：**不需要**。SNN 与 RL 模型完全在 CPU 上运行。
+
+### 环境规则
+- **ROS 包**通过 `conda install` 安装。
+- **纯 Python 包**（`pygame`、`pillow` 等）必须在 conda 环境内用 `pip` 安装。**不要**使用 `sudo pip`。
+- **RL 训练**需要单独建一个独立环境（`fly_rl`），以避免与 ROS 的 Qt / sdl2 依赖冲突。
+
+---
 ## 安装与训练
 
 ### 1. 前置要求
