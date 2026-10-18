@@ -24,8 +24,7 @@
 | 生物大脑 (12.7 万神经元 SNN) | 强化学习智能体 (PPO) |
 | :---: | :---: |
 | *异步计算* | *同步计算* |
-| <img src="docs/demo_snn.gif" width="400" alt="SNN"> | <img src="docs/demo_rl.gif" width="400" alt="RL"> |
-| **[此处替换为你的 SNN 动图]** | **[此处替换为你的 RL 动图]** |
+| <img src="SNN.gif" width="400" alt="SNN"> | <img src="RL.gif" width="400" alt="RL"> |
 
 > *(注：SNN 在 CPU 上运行极其缓慢，需要异步线程解耦，导致动作卡顿。而 RL 模型以 30Hz 丝滑运行。)*
 
