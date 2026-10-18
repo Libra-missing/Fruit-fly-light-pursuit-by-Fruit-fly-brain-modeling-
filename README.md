@@ -23,9 +23,8 @@ Here is a comparison between the biological Spiking Neural Network (SNN) brain a
 
 | Biological Brain (127K-neuron SNN) | Reinforcement Learning Agent (PPO) |
 | :---: | :---: |
-| *Asynchronous, computational heavy* | *Synchronous, sub-millisecond inference* |
-| <img src="docs/demo_snn.gif" width="400" alt="SNN"> | <img src="docs/demo_rl.gif" width="400" alt="RL"> |
-| **[Insert your SNN GIF here]** | **[Insert your RL GIF here]** |
+| *Asynchronous* | *Synchronous* |
+| <img src="SNN.gif" width="400" alt="SNN"> | <img src="RL.gif" width="400" alt="RL"> |
 
 > *(Note: The SNN runs slowly on CPU and requires asynchronous thread decoupling, resulting in "stuttering" motion. The RL agent runs at 30Hz smoothly.)*
 
@@ -55,7 +54,7 @@ Why use Reinforcement Learning? Here is the performance comparison I measured:
 | **Model Size** | 127,400 neurons | ~10,000 parameters (MLP) |
 | **Inference Latency** | ~500 ms / step (CPU) | < 1 ms / step (CPU) |
 | **Control Frequency** | Async (2 Hz simulation, 10 Hz control)| Synchronous (30 Hz) |
-| **Trajectory Quality** | Stuttering, reactive | Smooth, predictive interception |
+| **Trajectory Quality** | Reactive | Predictive interception |
 | **Training Method** | Evolutionary (Connectome) | PPO (Reinforcement Learning) |
 
 **Key Insight**: The biological connectome contains extreme biological realism but suffers from massive computational overhead on standard CPUs. By training an RL agent with a simplified reward function (distance reduction), we achieve **500x faster inference** and highly smooth control in the same environment.
